@@ -35,6 +35,7 @@ diskimages:
       elements:
         - ubuntu
         - vm
+        - pip-and-virtualenv
         - openstack-repos
         - puppet
         - nodepool-base
