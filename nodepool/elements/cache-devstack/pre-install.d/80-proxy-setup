@@ -1,0 +1,48 @@
+#!/bin/bash
+# set up the proxy in current user
+
+if [ ${DIB_DEBUG_TRACE:-0} -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+# make git use proxy
+cat << EOF > ~/.gitconfig
+[http]
+	proxy = http://10.180.210.17:8123
+[https]
+	proxy = http://10.180.210.17:8123
+[url "https://"]
+	insteadof = git://
+EOF
+
+# make wget use proxy
+cat << EOF > ~/.wgetrc
+http_proxy = http://10.180.210.17:8123
+https_proxy = http://10.180.210.17:8123
+no_proxy = 127.0.0.1,localhost
+EOF
+
+# make curl use proxy
+cat << EOF > ~/.curlrc
+proxy http://10.180.210.17:8123
+EOF
+
+if [ $USER == 'root' ]
+then
+# make pip use proxy
+cat << EOF > /etc/pip.conf
+[global]
+proxy = http://10.180.210.17:8123
+EOF
+fi
+
+if [ $USER == 'root' ]
+then
+# make apt use proxy
+cat << EOF > /etc/apt/apt.conf.d/80http-proxy
+Acquire::http::proxy "http://10.180.210.17:8123";
+Acquire::https::proxy "http://10.180.210.17:8123";
+EOF
+fi
